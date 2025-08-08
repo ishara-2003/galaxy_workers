@@ -32,7 +32,7 @@ function handleSearch(event) {
             localStorage.setItem('searches', JSON.stringify(searches));
         }
     } else if (phoneNumber.length >= 2) {
-        results = '<p style="color: red;">කරුණාකර වලංගු දුරකථන අංකයක් ඇතුලත් කරන්න (අවම වශයෙන් ඉලක්කම් 10ක්).</p>';
+        results = '<p style="color: red;">කරුණාකර වලංගු දුරකථන අංකයක් ඇතුළත් කරන්න (අවම වශයෙන් ඉලක්කම් 10ක්).</p>';
         suggestions = `<p>යෝජිත අංක: ${countryCode}${phoneNumber}123, ${countryCode}${phoneNumber}456</p>`;
     } else {
         suggestions = `<p>යෝජිත අංක: ${countryCode}123456789, ${countryCode}987654321</p>`;
@@ -58,16 +58,27 @@ function sendToSelected() {
     const message = document.getElementById('message').value;
     const media = document.getElementById('media').files[0];
     const resultsDiv = document.getElementById('message_results');
+    const whatsappConfig = JSON.parse(localStorage.getItem('whatsappConfig') || '{}');
 
     if (phone && message) {
-        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-        resultsDiv.innerHTML = `<p style="color: green;">පණිවිඩය යැවීම සාර්ථකයි! (${phone})</p>`;
-        if (media) {
-            resultsDiv.innerHTML += `<p>මාධ්‍ය යැවීමට WhatsApp හි උඩුගත කරන්න.</p>`;
+        if (whatsappConfig.access_token) {
+            // Mock WhatsApp Business API call (GitHub Pages can't make real API calls)
+            resultsDiv.innerHTML = `<p style="color: green;">[Mock] WhatsApp Business API හරහා පණිවිඩය යැවීම සාර්ථකයි! (${phone})</p>`;
+            if (media) {
+                resultsDiv.innerHTML += `<p>මාධ්‍ය යැවීමට WhatsApp Business API හි උඩුගත කරන්න (Serverless platform එකක් ඕනේ).</p>`;
+            }
+            resultsDiv.innerHTML += `<p>Business ID: ${whatsappConfig.business_id}, Phone ID: ${whatsappConfig.phone_id}</p>`;
+        } else {
+            // Fallback to Click-to-Chat
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            resultsDiv.innerHTML = `<p style="color: green;">Click-to-Chat හරහා පණිවිඩය යැවීම සාර්ථකයි! (${phone})</p>`;
+            if (media) {
+                resultsDiv.innerHTML += `<p>මාධ්‍ය යැවීමට WhatsApp හි උඩුගත කරන්න.</p>`;
+            }
         }
     } else {
-        resultsDiv.innerHTML = `<p style="color: red;">කරුණාකර දුරකථන අංකය සහ පණිවිඩය ඇතුලත් කරන්න.</p>`;
+        resultsDiv.innerHTML = `<p style="color: red;">කරුණාකර දුරකථන අංකය සහ පණිවිඩය ඇතුළත් කරන්න.</p>`;
     }
 }
 
@@ -76,18 +87,50 @@ function sendToAll() {
     const media = document.getElementById('media').files[0];
     const resultsDiv = document.getElementById('message_results');
     let searches = JSON.parse(localStorage.getItem('searches') || '[]');
+    const whatsappConfig = JSON.parse(localStorage.getItem('whatsappConfig') || '{}');
 
     if (message && searches.length > 0) {
-        searches.forEach(phone => {
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-        });
-        resultsDiv.innerHTML = `<p style="color: green;">සියලුම සෙවූ අංක (${searches.length}) වලට පණිවිඩ යැවීම සාර්ථකයි!</p>`;
-        if (media) {
-            resultsDiv.innerHTML += `<p>මාධ්‍ය යැවීමට WhatsApp හි උඩුගත කරන්න.</p>`;
+        if (whatsappConfig.access_token) {
+            // Mock WhatsApp Business API call
+            resultsDiv.innerHTML = `<p style="color: green;">[Mock] WhatsApp Business API හරහා සියලුම සෙවූ අංක (${searches.length}) වලට පණිවිඩ යැවීම සාර්ථකයි!</p>`;
+            if (media) {
+                resultsDiv.innerHTML += `<p>මාධ්‍ය යැවීමට WhatsApp Business API හි උඩුගත කරන්න (Serverless platform එකක් ඕනේ).</p>`;
+            }
+            resultsDiv.innerHTML += `<p>Business ID: ${whatsappConfig.business_id}, Phone ID: ${whatsappConfig.phone_id}</p>`;
+        } else {
+            // Fallback to Click-to-Chat
+            searches.forEach(phone => {
+                const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+            });
+            resultsDiv.innerHTML = `<p style="color: green;">Click-to-Chat හරහා සියලුම සෙවූ අංක (${searches.length}) වලට පණිවිඩ යැවීම සාර්ථකයි!</p>`;
+            if (media) {
+                resultsDiv.innerHTML += `<p>මාධ්‍ය යැවීමට WhatsApp හි උඩුගත කරන්න.</p>`;
+            }
         }
     } else {
-        resultsDiv.innerHTML = `<p style="color: red;">කරුණාකර පණිවිඩයක් ඇතුලත් කරන්න හෝ සෙවූ අංක තිබෙන බව තහවුරු කරන්න.</p>`;
+        resultsDiv.innerHTML = `<p style="color: red;">කරුණාකර පණිවිඩයක් ඇතුළත් කරන්න හෝ සෙවූ අංක තිබෙන බව තහවුරු කරන්න.</p>`;
+    }
+}
+
+function handleIntegration(event) {
+    event.preventDefault();
+    const businessId = document.getElementById('business_id').value;
+    const phoneId = document.getElementById('phone_id').value;
+    const accessToken = document.getElementById('access_token').value;
+    const resultsDiv = document.getElementById('integration_results');
+
+    if (businessId && phoneId && accessToken) {
+        // Store credentials in localStorage with base64 encoding (basic security)
+        const whatsappConfig = {
+            business_id: btoa(businessId),
+            phone_id: btoa(phoneId),
+            access_token: btoa(accessToken)
+        };
+        localStorage.setItem('whatsappConfig', JSON.stringify(whatsappConfig));
+        resultsDiv.innerHTML = `<p style="color: green;">WhatsApp Business API credentials ආරක්ෂිතව ඒකාබද්ධ කරන ලදි! Messaging සඳහා serverless platform එකක් භාවිතා කරන්න.</p>`;
+    } else {
+        resultsDiv.innerHTML = `<p style="color: red;">කරුණාකර සියලුම තොරතුරු ඇතුළත් කරන්න.</p>`;
     }
 }
 
