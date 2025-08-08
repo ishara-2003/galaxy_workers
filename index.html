@@ -14,9 +14,11 @@
                 <li><a href="#home" onclick="showSection('home')">මුල් පිටුව</a></li>
                 <li><a href="#search" onclick="showSection('search')">WhatsApp සෙවීම</a></li>
                 <li><a href="#message" onclick="showSection('message')">පණිවිඩ යැවීම</a></li>
+                <li><a href="#integration" onclick="showSection('integration')">WhatsApp Integration</a></li>
                 <li><a href="#register" onclick="showSection('register')">ලියාපදිංචි වන්න</a></li>
                 <li><a href="#payment" onclick="showSection('payment')">ගෙවීම්</a></li>
                 <li><a href="#premium" onclick="showSection('premium')">Premium</a></li>
+                <li><a href="#information" onclick="showSection('information')">තොරතුරු</a></li>
             </ul>
         </nav>
     </header>
@@ -24,7 +26,7 @@
         <section id="home">
             <h2>ආයුබෝවන්! Galaxy Workers වෙත සාදරයෙන් පිළිගනිමු</h2>
             <p>අපගේ වෙබ් අඩවිය හරහා WhatsApp අංක සොයන්න, පණිවිඩ යවන්න, සහ premium සේවා භුක්ති විඳින්න!</p>
-            <p>අප හා සම්බන්�ධ වන්න: <strong>0741587427</strong></p>
+            <p>අප හා සම්බන්ධ වන්න: <strong>0741587427</strong></p>
         </section>
         <section id="search" style="display: none;">
             <h2>WhatsApp අංක සෙවීම</h2>
@@ -59,6 +61,21 @@
                 <button type="button" onclick="sendToAll()">සියලුම සෙවූ අංකවලට යවන්න</button>
             </form>
             <div id="message_results"></div>
+        </section>
+        <section id="integration" style="display: none;">
+            <h2>WhatsApp Business API Integration</h2>
+            <p>ඔබේ WhatsApp Business API ගිණුම ආරක්ෂිතව ඒකාබද්ධ කරන්න. ඔබේ WhatsApp Business ID, Phone ID, සහ Access Token ඇතුළත් කරන්න.</p>
+            <form id="integrationForm" onsubmit="handleIntegration(event)">
+                <label for="business_id">WhatsApp Business ID:</label>
+                <input type="text" id="business_id" name="business_id" required>
+                <label for="phone_id">Phone ID:</label>
+                <input type="text" id="phone_id" name="phone_id" required>
+                <label for="access_token">Access Token:</label>
+                <input type="password" id="access_token" name="access_token" required>
+                <button type="submit">ඒකාබද්ධ කරන්න</button>
+            </form>
+            <div id="integration_results"></div>
+            <p><strong>සටහන:</strong> ඔබේ තොරතුරු ආරක්ෂිතව localStorage හි ගබඩා වේ. Serverless platform (උදා: Vercel) භාවිතයෙන් තවත් ආරක්ෂාව වැඩි කරන්න.</p>
         </section>
         <section id="register" style="display: none;">
             <h2>ලියාපදිංචි වන්න</h2>
@@ -119,6 +136,28 @@
                 <button type="submit">Premium සැලැස්ම ලබාගන්න</button>
             </form>
             <div id="premium_results"></div>
+        </section>
+        <section id="information" style="display: none;">
+            <h2>WhatsApp Business API තොරතුරු</h2>
+            <h3>WhatsApp Business ID, Phone ID, සහ Access Token ලබාගන්නේ කෙසේද?</h3>
+            <p><strong>සිංහල:</strong> WhatsApp Business API භාවිතා කිරීමට, ඔබට Meta Developer ගිණුමක් අවශ්‍යයි. පහත පියවර අනුගමනය කරන්න:</p>
+            <ol>
+                <li><a href="https://developers.facebook.com/docs/whatsapp/" target="_blank">Meta Developer</a> වෙබ් අඩවියට යන්න.</li>
+                <li>Sign Up කර Meta Business Manager ගිණුමක් සාදන්න.</li>
+                <li>Create App > Business තෝරන්න > App නම: Galaxy Workers.</li>
+                <li>WhatsApp > API Setup > Cloud API තෝරන්න > Phone number එකතු කරන්න (+94).</li>
+                <li>Configuration වලින් Business ID, Phone ID, සහ Access Token copy කරගන්න.</li>
+            </ol>
+            <p><strong>English:</strong> To use WhatsApp Business API, you need a Meta Developer account. Follow these steps:</p>
+            <ol>
+                <li>Visit <a href="https://developers.facebook.com/docs/whatsapp/" target="_blank">Meta Developer</a>.</li>
+                <li>Sign up and create a Meta Business Manager account.</li>
+                <li>Create App > Select Business > Name: Galaxy Workers.</li>
+                <li>Go to WhatsApp > API Setup > Choose Cloud API > Add phone number (+94).</li>
+                <li>From Configuration, copy Business ID, Phone ID, and Access Token.</li>
+            </ol>
+            <p><strong>Link:</strong> <a href="https://developers.facebook.com/docs/whatsapp/" target="_blank">Meta Developer WhatsApp Documentation</a></p>
+            <p><strong>සටහන:</strong> ඔබේ credentials ආරක්ෂිතව "WhatsApp Integration" section එකේ ඇතුළත් කරන්න. Browser tabs open නොවී messaging සඳහා serverless platform (උදා: Vercel) භාවිතා කරන්න.</p>
         </section>
     </main>
     <footer>
