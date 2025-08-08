@@ -1,168 +1,327 @@
 <!DOCTYPE html>
 <html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Workers</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxy Workers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone@7/babel.min.js"></script>
+  <script src="https://unpkg.com/i18next@23.11.5/dist/umd/i18next.min.js"></script>
+  <script src="https://unpkg.com/react-i18next@14.1.1/dist/umd/react-i18next.min.js"></script>
 </head>
-<body>
-    <header>
-        <h1>Galaxy Workers</h1>
-        <nav>
-            <ul>
-                <li><a href="#home" onclick="showSection('home')">මුල් පිටුව</a></li>
-                <li><a href="#search" onclick="showSection('search')">WhatsApp සෙවීම</a></li>
-                <li><a href="#message" onclick="showSection('message')">පණිවිඩ යැවීම</a></li>
-                <li><a href="#integration" onclick="showSection('integration')">WhatsApp Integration</a></li>
-                <li><a href="#register" onclick="showSection('register')">ලියාපදිංචි වන්න</a></li>
-                <li><a href="#payment" onclick="showSection('payment')">ගෙවීම්</a></li>
-                <li><a href="#premium" onclick="showSection('premium')">Premium</a></li>
-                <li><a href="#information" onclick="showSection('information')">තොරතුරු</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="home">
-            <h2>ආයුබෝවන්! Galaxy Workers වෙත සාදරයෙන් පිළිගනිමු</h2>
-            <p>අපගේ වෙබ් අඩවිය හරහා WhatsApp අංක සොයන්න, පණිවිඩ යවන්න, සහ premium සේවා භුක්ති විඳින්න!</p>
-            <p>අප හා සම්බන්ධ වන්න: <strong>0741587427</strong></p>
-        </section>
-        <section id="search" style="display: none;">
-            <h2>WhatsApp අංක සෙවීම</h2>
-            <input type="checkbox" id="enableSuggestions" checked> <label for="enableSuggestions">යෝජිත WhatsApp අංක පෙන්වන්න</label>
-            <form id="searchForm" onsubmit="handleSearch(event)">
-                <label for="country_code">රටේ කේතය:</label>
-                <select id="country_code" name="country_code">
-                    <option value="+94">ශ්‍රී ලංකා (+94)</option>
-                    <option value="+1">එක්සත් ජනපදය (+1)</option>
-                    <option value="+91">ඉන්දියාව (+91)</option>
-                </select>
-                <label for="phone_number">දුරකථන අංකය:</label>
-                <input type="text" id="phone_number" name="phone_number" placeholder="උදා: 123456789">
-                <button type="submit">WhatsApp අංකය සොයන්න</button>
-            </form>
-            <div id="results"></div>
-            <h3>අපගේ යෝජිත WhatsApp අංක</h3>
-            <div id="suggested_numbers"></div>
-            <h3>පෙර සෙවූ අංක</h3>
-            <div id="search_history"></div>
-        </section>
-        <section id="message" style="display: none;">
-            <h2>පණිවිඩ යැවීම</h2>
-            <form id="messageForm" onsubmit="event.preventDefault()">
-                <label for="msg_phone">දුරකථන අංකය (රටේ කේතය සමඟ):</label>
-                <input type="text" id="msg_phone" name="msg_phone" placeholder="උදා: +94123456789">
-                <label for="message">පණිවිඩය:</label>
-                <textarea id="message" name="message" placeholder="ඔබේ පණිවිඩය"></textarea>
-                <label for="media">පින්තූර/වීඩියෝ/ශ්‍රව්‍ය/ගොනු උඩුගත කරන්න:</label>
-                <input type="file" id="media" name="media" accept="image/*,video/*,audio/*">
-                <button type="button" onclick="sendToSelected()">තෝරාගත් අංකයට යවන්න</button>
-                <button type="button" onclick="sendToAll()">සියලුම සෙවූ අංකවලට යවන්න</button>
-            </form>
-            <div id="message_results"></div>
-        </section>
-        <section id="integration" style="display: none;">
-            <h2>WhatsApp Business API Integration</h2>
-            <p>ඔබේ WhatsApp Business API ගිණුම ආරක්ෂිතව ඒකාබද්ධ කරන්න. ඔබේ WhatsApp Business ID, Phone ID, සහ Access Token ඇතුළත් කරන්න.</p>
-            <form id="integrationForm" onsubmit="handleIntegration(event)">
-                <label for="business_id">WhatsApp Business ID:</label>
-                <input type="text" id="business_id" name="business_id" required>
-                <label for="phone_id">Phone ID:</label>
-                <input type="text" id="phone_id" name="phone_id" required>
-                <label for="access_token">Access Token:</label>
-                <input type="password" id="access_token" name="access_token" required>
-                <button type="submit">ඒකාබද්ධ කරන්න</button>
-            </form>
-            <div id="integration_results"></div>
-            <p><strong>සටහන:</strong> ඔබේ තොරතුරු ආරක්ෂිතව localStorage හි ගබඩා වේ. Serverless platform (උදා: Vercel) භාවිතයෙන් තවත් ආරක්ෂාව වැඩි කරන්න.</p>
-        </section>
-        <section id="register" style="display: none;">
-            <h2>ලියාපදිංචි වන්න</h2>
-            <form id="registerForm" onsubmit="handleRegister(event)">
-                <label for="first_name">මුල් නම:</label>
-                <input type="text" id="first_name" name="first_name" required>
-                <label for="second_name">දෙවන නම:</label>
-                <input type="text" id="second_name" name="second_name" required>
-                <label for="username">පරිශීලක නම:</label>
-                <input type="text" id="username" name="username" required>
-                <label for="password">මුරපදය:</label>
-                <input type="password" id="password" name="password" required>
-                <button type="submit">ලියාපදිංචි වන්න</button>
-            </form>
-            <div id="register_results"></div>
-        </section>
-        <section id="payment" style="display: none;">
-            <h2>ගෙවීම්</h2>
-            <button id="showPaymentDetails">ගෙවීම් විස්තර පෙන්වන්න</button>
-            <div id="payment_details" style="display: none;">
-                <h3>බැංකු විස්තර</h3>
-                <p><strong>බැංකුව:</strong> BOC</p>
-                <p><strong>නම:</strong> WVI SANDARUWAN</p>
-                <p><strong>ගිණුම් අංකය:</strong> 7748756</p>
-                <p><strong>ශාඛාව:</strong> Padukka</p>
-                <p><strong>English:</strong> Please deposit Rs. 100 to the above account for registration. Upload the bank slip (PDF or image) below.</p>
-                <p><strong>සිංහල:</strong> ලියාපදිංචි වීම සඳහා ඉහත ගිණුමට රු. 100 තැන්පත් කරන්න. පහතින් බැංකු ස්ලිප් එක (PDF හෝ රූපය) උඩුගත කරන්න.</p>
-                <form id="paymentForm" onsubmit="handlePayment(event)">
-                    <label for="slip">බැංකු ස්ලිප් උඩුගත කරන්න:</label>
-                    <input type="file" id="slip" name="slip" accept="image/*,application/pdf" required>
-                    <button type="submit">ස්ලිප් තහවුරු කරන්න</button>
-                </form>
+<body class="bg-gray-100 font-sans">
+  <div id="root"></div>
+  <script type="text/babel">
+    i18next.init({
+      lng: 'si',
+      resources: {
+        si: {
+          translation: {
+            title: 'Galaxy Workers',
+            search: 'WhatsApp අංක සෙවීම',
+            searchButton: 'සෙවීම',
+            numberPlaceholder: 'අංකය ඇතුලත් කරන්න',
+            message: 'පණිවිඩ යැවීම',
+            messagePlaceholder: 'පණිවිඩය ඇතුලත් කරන්න',
+            send: 'යවන්න',
+            media: 'Media යැවීම',
+            upload: 'Upload කරන්න',
+            register: 'ලියාපදිංචි වීම',
+            firstName: 'මුල් නම',
+            lastName: 'අවසන් නම',
+            username: 'පරිශීලක නම',
+            password: 'මුරපදය',
+            email: 'විද්‍යුත් තැපෑල',
+            contactNumber: 'අංකය',
+            registerButton: 'ලියාපදිංචි වන්න',
+            payment: 'ගෙවීම්',
+            showPayment: 'ගෙවීම් විස්තර පෙන්වන්න',
+            paymentDetails: 'බැංකු විස්තර: BOC, WVI SANDARUWAN, Acc No: 7748756, Padukka Branch. රු. 100 ගෙවා slip එක upload කරන්න.',
+            paymentError: 'බැංකු slip එක වැරදියි. කරුණාකර නැවත උත්සාහ කරන්න.',
+            premium: 'Premium Plans',
+            freePlan: 'නොමිලේ: දවසකට accounts 35',
+            contact: 'අප අමතන්න: 0741587427',
+            integrate: 'WhatsApp ඒකාබද්ධ කිරීම',
+            integrateInfo: 'WhatsApp Business ID, Phone ID, Token ගන්න: Meta Developer Portal එකට ගොස් ඔබේ credentials ලබාගන්න.'
+          }
+        },
+        en: {
+          translation: {
+            title: 'Galaxy Workers',
+            search: 'WhatsApp Number Search',
+            searchButton: 'Search',
+            numberPlaceholder: 'Enter number',
+            message: 'Send Message',
+            messagePlaceholder: 'Enter message',
+            send: 'Send',
+            media: 'Send Media',
+            upload: 'Upload',
+            register: 'Registration',
+            firstName: 'First Name',
+            lastName: 'Last Name',
+            username: 'Username',
+            password: 'Password',
+            email: 'Email',
+            contactNumber: 'Contact Number',
+            registerButton: 'Register',
+            payment: 'Payment',
+            showPayment: 'Show Payment Details',
+            paymentDetails: 'Bank Details: BOC, WVI SANDARUWAN, Acc No: 7748756, Padukka Branch. Pay Rs. 100 and upload the bank slip.',
+            paymentError: 'Invalid bank slip. Please try again.',
+            premium: 'Premium Plans',
+            freePlan: 'Free: 35 accounts per day',
+            contact: 'Contact Us: 0741587427',
+            integrate: 'Integrate WhatsApp',
+            integrateInfo: 'Get WhatsApp Business ID, Phone ID, Token: Visit Meta Developer Portal to obtain your credentials.'
+          }
+        }
+      }
+    });
+
+    function App() {
+      const { t } = ReactI18Next.useTranslation();
+      const [number, setNumber] = React.useState('');
+      const [countryCode, setCountryCode] = React.useState('+94');
+      const [searchResults, setSearchResults] = React.useState([]);
+      const [message, setMessage] = React.useState('');
+      const [language, setLanguage] = React.useState('si');
+      const [showPaymentDetails, setShowPaymentDetails] = React.useState(false);
+      const [slipFile, setSlipFile] = React.useState(null);
+      const [sentMessages, setSentMessages] = React.useState([]);
+      const [page, setPage] = React.useState(1);
+
+      const countryCodes = [
+        { code: '+94', name: 'ශ්‍රී ලංකා (Sri Lanka)' },
+        { code: '+1', name: 'USA' },
+        { code: '+91', name: 'India' },
+        // Add more country codes (200+)
+      ];
+
+      const searchWhatsApp = () => {
+        const results = [
+          { number: '+94712345678', name: 'Nimal Perera' },
+          { number: '+94787654321', name: 'Kamal Silva' },
+          // Simulated results
+        ].filter((r, i, arr) => arr.findIndex(x => x.number === r.number) === i); // Remove duplicates
+        setSearchResults(results.slice((page - 1) * 35, page * 35)); // Paginate 35 per page
+      };
+
+      const sendMessage = (toNumber = null) => {
+        const newMessages = toNumber
+          ? [{ number: toNumber, message, timestamp: new Date().toLocaleString() }]
+          : searchResults.map(r => ({ number: r.number, message, timestamp: new Date().toLocaleString() }));
+        setSentMessages([...sentMessages, ...newMessages]);
+        alert(t('send'));
+        if (searchResults.length > 200) {
+          setSearchResults(searchResults.slice(-50)); // Auto delete first 200 accounts
+        }
+      };
+
+      const handlePayment = () => {
+        if (slipFile) {
+          // Simulate bank slip verification
+          const isValid = slipFile.name.includes('7748756');
+          if (isValid) {
+            alert('Registration successful!');
+          } else {
+            alert(t('paymentError'));
+          }
+        }
+      };
+
+      const integrateWhatsApp = () => {
+        // Simulate automatic WhatsApp integration
+        alert('WhatsApp integrated successfully!');
+      };
+
+      return (
+        <div className="container mx-auto p-4">
+          <header className="bg-blue-600 text-white p-4 flex justify-between">
+            <h1 className="text-2xl">{t('title')}</h1>
+            <select
+              className="bg-blue-800 text-white p-2"
+              onChange={(e) => {
+                setLanguage(e.target.value);
+                i18next.changeLanguage(e.target.value);
+              }}
+            >
+              <option value="si">සිංහල</option>
+              <option value="en">English</option>
+            </select>
+          </header>
+
+          {/* Navigation Bar */}
+          <nav className="bg-gray-200 p-2">
+            <a href="#integrate" className="text-blue-600 mx-2">{t('integrate')}</a>
+          </nav>
+
+          {/* WhatsApp Search Section */}
+          <section className="my-4">
+            <h2 className="text-xl">{t('search')}</h2>
+            <select
+              className="border p-2"
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+            >
+              {countryCodes.map((c) => (
+                <option key={c.code} value={c.code}>{c.name}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              className="border p-2 m-2"
+              placeholder={t('numberPlaceholder')}
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
+            />
+            <button
+              className="bg-blue-600 text-white p-2"
+              onClick={searchWhatsApp}
+            >
+              {t('searchButton')}
+            </button>
+            <div className="mt-4">
+              {searchResults.map((result) => (
+                <div
+                  key={result.number}
+                  className={`border p-2 my-2 ${sentMessages.some(m => m.number === result.number) ? 'bg-yellow-200' : ''}`}
+                >
+                  {result.number} - {result.name}
+                  <button
+                    className="bg-green-600 text-white p-1 ml-2"
+                    onClick={() => sendMessage(result.number)}
+                  >
+                    {t('send')}
+                  </button>
+                </div>
+              ))}
+              {searchResults.length > 0 && (
+                <div>
+                  <button
+                    className="bg-gray-600 text-white p-2 m-2"
+                    onClick={() => setPage(page - 1)}
+                    disabled={page === 1}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="bg-gray-600 text-white p-2 m-2"
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
-            <div id="payment_results"></div>
-        </section>
-        <section id="premium" style="display: none;">
-            <h2>Premium සැලසුම්</h2>
-            <p>නොමිලේ සැලැස්ම: දිනකට WhatsApp ගිණුම් 35ක් පමණයි.</p>
-            <h3>Premium සැලසුම්:</h3>
-            <ul>
-                <li>දිනකට ගිණුම් 100: රු. 20</li>
-                <li>දිනකට ගිණුම් 250: රු. 50</li>
-                <li>දිනකට ගිණුම් 400: රු. 90</li>
-                <li>දිනකට ගිණුම් 700: රු. 150</li>
-                <li>දිනකට ගිණුම් 1050: රු. 210</li>
-            </ul>
-            <form id="premiumForm" onsubmit="handlePremium(event)">
-                <label for="plan">සැලැස්ම තෝරන්න:</label>
-                <select id="plan" name="plan">
-                    <option value="100">100 ගිණුම් - රු. 20</option>
-                    <option value="250">250 ගිණුම් - රු. 50</option>
-                    <option value="400">400 ගිණුම් - රු. 90</option>
-                    <option value="700">700 ගිණුම් - රු. 150</option>
-                    <option value="1050">1050 ගිණුම් - රු. 210</option>
-                </select>
-                <label for="premium_slip">බැංකු ස්ලිප් උඩුගත කරන්න:</label>
-                <input type="file" id="premium_slip" name="premium_slip" accept="image/*,application/pdf" required>
-                <button type="submit">Premium සැලැස්ම ලබාගන්න</button>
-            </form>
-            <div id="premium_results"></div>
-        </section>
-        <section id="information" style="display: none;">
-            <h2>WhatsApp Business API තොරතුරු</h2>
-            <h3>WhatsApp Business ID, Phone ID, සහ Access Token ලබාගන්නේ කෙසේද?</h3>
-            <p><strong>සිංහල:</strong> WhatsApp Business API භාවිතා කිරීමට, ඔබට Meta Developer ගිණුමක් අවශ්‍යයි. පහත පියවර අනුගමනය කරන්න:</p>
-            <ol>
-                <li><a href="https://developers.facebook.com/docs/whatsapp/" target="_blank">Meta Developer</a> වෙබ් අඩවියට යන්න.</li>
-                <li>Sign Up කර Meta Business Manager ගිණුමක් සාදන්න.</li>
-                <li>Create App > Business තෝරන්න > App නම: Galaxy Workers.</li>
-                <li>WhatsApp > API Setup > Cloud API තෝරන්න > Phone number එකතු කරන්න (+94).</li>
-                <li>Configuration වලින් Business ID, Phone ID, සහ Access Token copy කරගන්න.</li>
-            </ol>
-            <p><strong>English:</strong> To use WhatsApp Business API, you need a Meta Developer account. Follow these steps:</p>
-            <ol>
-                <li>Visit <a href="https://developers.facebook.com/docs/whatsapp/" target="_blank">Meta Developer</a>.</li>
-                <li>Sign up and create a Meta Business Manager account.</li>
-                <li>Create App > Select Business > Name: Galaxy Workers.</li>
-                <li>Go to WhatsApp > API Setup > Choose Cloud API > Add phone number (+94).</li>
-                <li>From Configuration, copy Business ID, Phone ID, and Access Token.</li>
-            </ol>
-            <p><strong>Link:</strong> <a href="https://developers.facebook.com/docs/whatsapp/" target="_blank">Meta Developer WhatsApp Documentation</a></p>
-            <p><strong>සටහන:</strong> ඔබේ credentials ආරක්ෂිතව "WhatsApp Integration" section එකේ ඇතුළත් කරන්න. Browser tabs open නොවී messaging සඳහා serverless platform (උදා: Vercel) භාවිතා කරන්න.</p>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Galaxy Workers. සියලුම හිමිකම් ඇවිරිණි.</p>
-    </footer>
-    <script src="script.js"></script>
+          </section>
+
+          {/* Messaging Section */}
+          <section className="my-4">
+            <h2 className="text-xl">{t('message')}</h2>
+            <textarea
+              className="border p-2 w-full"
+              placeholder={t('messagePlaceholder')}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            ></textarea>
+            <button
+              className="bg-blue-600 text-white p-2 mt-2"
+              onClick={() => sendMessage()}
+            >
+              {t('send')} (Bulk)
+            </button>
+          </section>
+
+          {/* Media Sending Section */}
+          <section className="my-4">
+            <h2 className="text-xl">{t('media')}</h2>
+            <input type="file" className="border p-2" multiple />
+            <button className="bg-blue-600 text-white p-2 mt-2">{t('upload')}</button>
+          </section>
+
+          {/* Sent Messages & Replies */}
+          <section className="my-4">
+            <h2 className="text-xl">Sent Messages</h2>
+            {sentMessages.map((msg, i) => (
+              <div key={i} className="border p-2 my-2">
+                {msg.number}: {msg.message} ({msg.timestamp})
+              </div>
+            ))}
+          </section>
+
+          {/* Registration Section */}
+          <section className="my-4">
+            <h2 className="text-xl">{t('register')}</h2>
+            <input className="border p-2 m-2" placeholder={t('firstName')} />
+            <input className="border p-2 m-2" placeholder={t('lastName')} />
+            <input className="border p-2 m-2" placeholder={t('username')} />
+            <input className="border p-2 m-2" type="password" placeholder={t('password')} />
+            <input className="border p-2 m-2" placeholder={t('email')} />
+            <input className="border p-2 m-2" placeholder={t('contactNumber')} />
+            <button className="bg-blue-600 text-white p-2">{t('registerButton')}</button>
+          </section>
+
+          {/* Payment Section */}
+          <section className="my-4">
+            <h2 className="text-xl">{t('payment')}</h2>
+            <button
+              className="bg-blue-600 text-white p-2"
+              onClick={() => setShowPaymentDetails(!showPaymentDetails)}
+            >
+              {t('showPayment')}
+            </button>
+            {showPaymentDetails && (
+              <div className="mt-4">
+                <p>{t('paymentDetails')}</p>
+                <input
+                  type="file"
+                  className="border p-2 mt-2"
+                  onChange={(e) => setSlipFile(e.target.files[0])}
+                />
+                <button
+                  className="bg-blue-600 text-white p-2 mt-2"
+                  onClick={handlePayment}
+                >
+                  Submit Payment
+                </button>
+              </div>
+            )}
+          </section>
+
+          {/* Premium Plans */}
+          <section className="my-4">
+            <h2 className="text-xl">{t('premium')}</h2>
+            <p>{t('freePlan')}</p>
+            <p>100 accounts: රු. 20/day</p>
+            <p>250 accounts: රු. 50/day</p>
+            <p>400 accounts: රු. 90/day</p>
+            <p>700 accounts: රු. 150/day</p>
+            <p>1050 accounts: රු. 210/day</p>
+          </section>
+
+          {/* WhatsApp Integration Info */}
+          <section id="integrate" className="my-4">
+            <h2 className="text-xl">{t('integrate')}</h2>
+            <p>{t('integrateInfo')}</p>
+            <button
+              className="bg-blue-600 text-white p-2 mt-2"
+              onClick={integrateWhatsApp}
+            >
+              {t('integrate')}
+            </button>
+          </section>
+
+          {/* Contact Section */}
+          <footer className="bg-blue-600 text-white p-4 mt-4">
+            <p>{t('contact')}</p>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
 </body>
 </html>
